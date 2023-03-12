@@ -115,7 +115,7 @@ public class WebConfig implements WebMvcConfigurer {
         return entityManager;
     }
 
-    // Данный ибн нужен для создания TransactionManager под требования аннотации @EnableTransactionManagement
+    // Данный бин нужен для создания TransactionManager под требования аннотации @EnableTransactionManagement
     @Bean
     public JpaTransactionManager getTransactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
