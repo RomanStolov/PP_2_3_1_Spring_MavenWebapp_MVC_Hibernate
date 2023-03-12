@@ -129,8 +129,6 @@ public class WebConfig implements WebMvcConfigurer {
     // Используется в UserDAOEntityManagerImpl
     // Дал имя так как среда разработки сказала что два варианта при @Autoware в UserDAOEntityManagerImpl
     @Bean(name = "thisEntityManager")
-//    @Bean(name = "thisEntityManager")
-    @Scope(value = "prototype")
     public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory) {
 
         return entityManagerFactory.createEntityManager();
