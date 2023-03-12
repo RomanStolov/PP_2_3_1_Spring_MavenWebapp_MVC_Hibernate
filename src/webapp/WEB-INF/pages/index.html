@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:border="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список всех пользователей</title>
+    <style>
+        table th, table td {
+            padding: 4px;
+        }
+
+        .row {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div th:switch="${allUsersList}">
+    <h2 th:case="null">Нет ни одного пользователя!</h2>
+    <div
+            th:case="*">
+        <h2>Список всех пользователей</h2>
+        <br/>
+        <br/>
+        <table border="solid">
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Подробно</th>
+                <th>Изменить</th>
+                <th>Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${allUsersList}">
+                <td th:text="${user.getId()}">...</td>
+                <td th:text="${user.getName()}">...</td>
+                <td th:text="${user.getSurname()}">...</td>
+                <td><a th:href="@{/people/{id} (id=${user.getId()})}">ОК</a></td>
+                <td><a th:href="@{/people/{id}/edit (id=${user.getId()})}">ОК</a></td>
+                <td>
+                    <form th:method="DELETE" th:action="@{/people/{id} (id=${user.getId()})}">
+                        <input type="submit" value="ОК"/>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br/>
+    <br/>
+    <p><a href="/people/new">Добавить пользователя</a></p>
+</div>
+</body>
+</html>

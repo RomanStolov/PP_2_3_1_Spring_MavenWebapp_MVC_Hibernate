@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Данные пользователя</title>
+    <style>
+        table th, table td {
+            padding: 4px;
+        }
+
+        .row {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div th:object="${userById}">
+    <h2>Подробные данные пользователя:</h2>
+    <br/>
+    <br/>
+    <table border="solid">
+        <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Возраст</th>
+            <th>Почта</th>
+            <th>Изменить</th>
+            <th>Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        <td th:text="*{getId()}">...</td>
+        <td th:text="*{getName()}">...</td>
+        <td th:text="*{getSurname()}">...</td>
+        <td th:text="*{getAge()}">...</td>
+        <td th:text="*{getEmail()}">...</td>
+        <td><a th:href="@{/people/{id}/edit (id=*{getId()})}">ОК</a></td>
+        <td>
+            <form th:method="DELETE" th:action="@{/people/{id} (id=${userById.getId()})}">
+                <input type="submit" value="ОК"/>
+            </form>
+        </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br/>
+<br/>
+<p><a th:href="@{/people}">Вернуться обратно к списку пользователей</a></p>
+</div>
+</body>
+</html>
