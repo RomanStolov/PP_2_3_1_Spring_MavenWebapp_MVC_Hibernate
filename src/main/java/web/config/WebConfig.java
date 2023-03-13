@@ -3,7 +3,6 @@ package web.config;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -91,16 +90,6 @@ public class WebConfig implements WebMvcConfigurer {
         dataSource.setPassword(env.getRequiredProperty("db.password"));
 
         return dataSource;
-    }
-
-    /**
-     * Данный бин нужен для реализации доступа к базе через UserDAOJdbcTemplateImpl
-     * <p>
-     * Нужно удалить эту дополнительную реализацию перед отправкой ментору на проверку !!!
-     */
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(getDataSource());
     }
 
     /**
