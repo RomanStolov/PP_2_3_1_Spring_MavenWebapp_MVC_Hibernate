@@ -1,6 +1,8 @@
 package web.config;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,10 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-// Вырубил, так как в проекте не используется
-//import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -29,16 +28,14 @@ import java.util.Properties;
 @PropertySource(value = "classpath:db.properties")
 @ComponentScan(value = "web")
 public class WebConfig implements WebMvcConfigurer {
-//    Вырубил, так как в проекте не используетсяprivate
-//    final ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+    private final Environment env;
 
-    @Resource
-    private Environment env;
-
-//    Вырубил, так как в проекте не используется
-//    public WebConfig(ApplicationContext applicationContext) {
-//        this.applicationContext = applicationContext;
-//    }
+    @Autowired
+    public WebConfig(ApplicationContext applicationContext, Environment env) {
+        this.applicationContext = applicationContext;
+        this.env = env;
+    }
 
     /**
      * В данный  метод добавлена поддержка кириллицы
