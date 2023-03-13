@@ -3,6 +3,7 @@ package web.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+import web.config.WebConfig;
 import web.model.User;
 
 import javax.persistence.EntityManager;
@@ -15,11 +16,18 @@ public class UserDAOEntityManagerImpl implements UserDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    // Дал имя бину и указал явно какой использовать, так как среда разработки сказала что существует
-    // два варианта при @Autoware
+    /**
+     * Указал явно какой бин использовать, так как среда разработки сказала что существует
+     * два варианта получения бина в "WebConfig" при @Autoware:
+     *      - из метода getEntityManagerFactory() - НО ЭТОТ ВАРИАНТ НЕ РАБОТАЕТ !!!!!;
+     *      - из метода getEntityManager() - ЭТОТ ВАРИАНТ РАБОТАЕТ.
+     * @see web.config.WebConfig#getEntityManagerFactory()
+     */
     @Autowired
-    public UserDAOEntityManagerImpl(@Qualifier("thisEntityManager") EntityManager entityManager) {
 //    public UserDAOEntityManagerImpl(EntityManager entityManager) {
+    public UserDAOEntityManagerImpl(@Qualifier("getEntityManager") EntityManager entityManager) {
+//    public UserDAOEntityManagerImpl(@Qualifier("getEntityManagerFactory") EntityManager entityManager) {
+
         this.entityManager = entityManager;
     }
 

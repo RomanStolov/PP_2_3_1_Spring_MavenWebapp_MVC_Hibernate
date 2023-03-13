@@ -23,7 +23,10 @@ public class UserDAOJdbcTemplateImpl implements UserDAO {
                 new BeanPropertyRowMapper<>(User.class));
     }
 
-    // Этот метод не доделал !!!
+
+    /**
+     * Этот метод не доделал !!!
+     */
     @Override
     public void saveUser(User user) {
         jdbcTemplate.update(
@@ -52,6 +55,5 @@ public class UserDAOJdbcTemplateImpl implements UserDAO {
     public void deleteUser(Long id) {
         jdbcTemplate.update("DELETE FROM users WHERE id=?", id);
     }
-
 
 }

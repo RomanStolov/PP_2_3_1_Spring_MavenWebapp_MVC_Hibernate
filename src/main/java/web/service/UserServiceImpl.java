@@ -13,13 +13,17 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
 
-    // Использование сервисом DAO: UserDAOJdbcTemplateImpl
+    /**
+     * Использование сервисом DAO: UserDAOJdbcTemplateImpl
+     */
 //    @Autowired
 //    public UserServiceImpl(@Qualifier("userDAOJdbcTemplateImpl") UserDAO userDAO) {
 //        this.userDAO = userDAO;
 //    }
 
-    // Использование сервисом DAO: UserDAOEntityManagerImpl
+    /**
+     * Использование сервисом DAO: UserDAOEntityManagerImpl
+     */
     @Autowired
     public UserServiceImpl(@Qualifier("userDAOEntityManagerImpl") UserDAO userDAO) {
         this.userDAO = userDAO;

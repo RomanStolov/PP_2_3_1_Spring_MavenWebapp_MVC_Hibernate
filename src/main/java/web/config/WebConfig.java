@@ -1,7 +1,6 @@
 package web.config;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +15,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+// Вырубил, так как в проекте не используется
+//import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -29,17 +30,20 @@ import java.util.Properties;
 @PropertySource(value = "classpath:db.properties")
 @ComponentScan(value = "web")
 public class WebConfig implements WebMvcConfigurer {
-    // Вырубил, так как в проекте не используется
-    // private final ApplicationContext applicationContext;
+//    Вырубил, так как в проекте не используетсяprivate
+//    final ApplicationContext applicationContext;
+
     @Resource
     private Environment env;
 
-    // Вырубил, так как в проекте не используется
-    // public WebConfig(ApplicationContext applicationContext) {
-    //     this.applicationContext = applicationContext;
-    // }
+//    Вырубил, так как в проекте не используется
+//    public WebConfig(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
 
-    // В данный  метод добавлена поддержка кириллицы
+    /**
+     * В данный  метод добавлена поддержка кириллицы
+     */
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -61,7 +65,9 @@ public class WebConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
-    // В данный  метод добавлена поддержка кириллицы
+    /**
+     * В данный  метод добавлена поддержка кириллицы
+     */
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
@@ -71,9 +77,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.viewResolver(resolver);
     }
 
-    // Данный бин нужен для подключение базы данных
-    // Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством объявленного
-    // в поле Environment) указанного в папке ресурсов в аннотации @PropertySource
+    /**
+     * Данный бин нужен для подключение базы данных
+     * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему
+     * посредством объявленного в поле Environment) указанного в папке ресурсов в аннотации
+     */
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -85,20 +93,30 @@ public class WebConfig implements WebMvcConfigurer {
         return dataSource;
     }
 
-    // Данный бин нужен для реализации доступа к базе через UserDAOJdbcTemplateImpl
-    // Нужно удалить эту дополнительную реализацию перед отправкой ментору на проверку !!!
+    /**
+     * Данный бин нужен для реализации доступа к базе через UserDAOJdbcTemplateImpl
+     * <p>
+     * Нужно удалить эту дополнительную реализацию перед отправкой ментору на проверку !!!
+     */
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(getDataSource());
     }
 
-    // Данный бин нужен для создания фабрики EntityManagerFactory
-    // Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством объявленного
-    // в поле Environment) указанного в папке ресурсов в аннотации @PropertySource
+    /**
+     * Данный бин нужен для создания фабрики EntityManagerFactory
+     * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством
+     * объявленного в поле Environment) указанного в папке ресурсов в аннотации @PropertySource
+     * <p>
+     * IntelliJ IDEA сказала что два варианта при @Autoware в UserDAOEntityManagerImpl !!!!!
+     *
+     * @see web.dao.UserDAOEntityManagerImpl#UserDAOEntityManagerImpl
+     */
     @Bean
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManager =
                 new LocalContainerEntityManagerFactoryBean();
+        // Тут ниже явно указал на использование Hibernate
         entityManager.setDataSource(getDataSource());
         entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
@@ -115,7 +133,9 @@ public class WebConfig implements WebMvcConfigurer {
         return entityManager;
     }
 
-    // Данный бин нужен для создания TransactionManager под требования аннотации @EnableTransactionManagement
+    /**
+     * Данный бин нужен для создания TransactionManager под требования аннотации @EnableTransactionManagement
+     */
     @Bean
     public JpaTransactionManager getTransactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
@@ -125,10 +145,15 @@ public class WebConfig implements WebMvcConfigurer {
         return transactionManager;
     }
 
-    // Данный бин нужен для создания EntityManager из фабрики EntityManagerFactory
-    // Используется в UserDAOEntityManagerImpl
-    // Дал имя так как среда разработки сказала что два варианта при @Autoware в UserDAOEntityManagerImpl
-    @Bean(name = "thisEntityManager")
+    /**
+     * Данный бин нужен для создания EntityManager из фабрики EntityManagerFactory
+     * Используется в UserDAOEntityManagerImpl
+     * <p>
+     * IntelliJ IDEA сказала что два варианта при @Autoware в UserDAOEntityManagerImpl !!!!!
+     *
+     * @see web.dao.UserDAOEntityManagerImpl#UserDAOEntityManagerImpl
+     */
+    @Bean
     public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory) {
 
         return entityManagerFactory.createEntityManager();
