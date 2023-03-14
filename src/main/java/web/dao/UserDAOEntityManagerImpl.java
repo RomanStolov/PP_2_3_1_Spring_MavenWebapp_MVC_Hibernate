@@ -12,18 +12,24 @@ import java.util.List;
 
 @Repository
 public class UserDAOEntityManagerImpl implements UserDAO {
-    private final EntityManagerFactory entityManagerFactory;
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    public UserDAOEntityManagerImpl(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
+    /**
+     * Дополнительно вариант реализации метода "getAllUsers"
+     */
+    // Вариант №2 - Работает !!!
+//    @Override
+//    public List<User> getAllUsers() {
+//        String hql = "SELECT u FROM User u";
+//        TypedQuery<User> typedQuery = entityManager.createQuery(hql, User.class);
+//        return typedQuery.getResultList();
+//    }
 
+    // Вариант №1 - Работает !!!
     @Override
     public List<User> getAllUsers() {
-        String hql = "SELECT u FROM User u";
+        String hql = "FROM User";
         TypedQuery<User> typedQuery = entityManager.createQuery(hql, User.class);
         return typedQuery.getResultList();
     }
@@ -35,25 +41,25 @@ public class UserDAOEntityManagerImpl implements UserDAO {
 
     /**
      * Дополнительно два варианта реализации метода "getUser"
-     * <p>
-     * // Вариант №2 - Работает !!!
-     *
-     * @Override public User getUser(Long id) {
-     * String hql = "SELECT u FROM User u WHERE u.id=:id";
-     * TypedQuery<User> typedQuery = entityManager.createQuery(
-     * "SELECT u FROM User u WHERE u.id=:id", User.class);
-     * typedQuery.setParameter("id", id);
-     * return typedQuery.getResultList().stream().findAny().orElse(null);
-     * }
-     * <p>
-     * // Вариант №3 - Работает !!!
-     * @Override public User getUser(Long id) {
-     * String hql = "SELECT u FROM User u WHERE u.id=?1";
-     * TypedQuery<User> typedQuery = entityManager.createQuery(hql, User.class);
-     * typedQuery.setParameter(1, id);
-     * return typedQuery.getSingleResult();
-     * }
      */
+    // Вариант №2 - Работает !!!
+//    @Override
+//    public User getUser(Long id) {
+//        String hql = "SELECT u FROM User u WHERE u.id=:id";
+//        TypedQuery<User> typedQuery = entityManager.createQuery(
+//                "SELECT u FROM User u WHERE u.id=:id", User.class);
+//        typedQuery.setParameter("id", id);
+//        return typedQuery.getResultList().stream().findAny().orElse(null);
+//    }
+
+    // Вариант №3 - Работает !!!
+//    @Override
+//    public User getUser(Long id) {
+//        String hql = "SELECT u FROM User u WHERE u.id=?1";
+//        TypedQuery<User> typedQuery = entityManager.createQuery(hql, User.class);
+//        typedQuery.setParameter(1, id);
+//        return typedQuery.getSingleResult();
+//    }
 
     // Вариант №1 - Работает !!!
     @Override
@@ -63,31 +69,13 @@ public class UserDAOEntityManagerImpl implements UserDAO {
         return returnUser;
     }
 
-    /**
-     * Дополнительно вариант реализации метода "updateUser"
-     * <p>
-     * // Вариант №2 - Работает !!!
-     *
-     * @Override public void updateUser(Long id, User newUser) {
-     * User findUser = entityManager.find(User.class, id);
-     * entityManager.detach(findUser);
-     * findUser.setName(newUser.getName());
-     * findUser.setSurname(newUser.getSurname());
-     * findUser.setAge(newUser.getAge());
-     * findUser.setEmail(newUser.getEmail());
-     * entityManager.merge(findUser);
-     * }
-     */
-
-    // Вариант №1 - Работает !!!
     @Override
     public void updateUser(Long id, User newUser) {
-        User findUser = getUser(id);
+        User findUser = entityManager.find(User.class, id);
         findUser.setName(newUser.getName());
         findUser.setSurname(newUser.getSurname());
         findUser.setAge(newUser.getAge());
         findUser.setEmail(newUser.getEmail());
-        entityManager.merge(findUser);
     }
 
     @Override
@@ -95,5 +83,6 @@ public class UserDAOEntityManagerImpl implements UserDAO {
         User deleteUser = entityManager.find(User.class, id);
         entityManager.remove(deleteUser);
     }
+
 
 }

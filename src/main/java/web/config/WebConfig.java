@@ -110,15 +110,15 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManager =
+        LocalContainerEntityManagerFactoryBean entityManagerFactory =
                 new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(getDataSource());
-        entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManager.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
-        entityManager.setJpaProperties(getHibernateProperties());
+        entityManagerFactory.setDataSource(getDataSource());
+        entityManagerFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        entityManagerFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactory.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
+        entityManagerFactory.setJpaProperties(getHibernateProperties());
 
-        return entityManager;
+        return entityManagerFactory;
     }
 
     /**
