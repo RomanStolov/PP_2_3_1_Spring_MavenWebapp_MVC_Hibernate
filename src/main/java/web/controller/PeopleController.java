@@ -14,7 +14,6 @@ import java.util.List;
 public class PeopleController {
     private UserService userService;
 
-    @Autowired
     public PeopleController(UserService userService) {
         this.userService = userService;
     }

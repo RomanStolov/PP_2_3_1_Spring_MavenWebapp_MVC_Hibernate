@@ -17,8 +17,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -43,8 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        // Вырубил, так как в проекте не используется
-        // templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setApplicationContext(applicationContext);
         templateResolver.setPrefix("/WEB-INF/pages/");
         templateResolver.setSuffix(".html");
         templateResolver.setCharacterEncoding("UTF-8");
@@ -74,9 +71,10 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Данный бин нужен для подключение базы данных
-     * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему
-     * посредством объявленного в поле Environment) указанного в папке ресурсов в аннотации
+     * Данный бин нужен для подключение базы данных MySQL или PostgreSQL
+     * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством
+     * объявленного в поле Environment) указанного в папке ресурсов с внедрением через конструктор
+     * c аннотацией @Autowired
      */
     @Bean
     public DataSource getDataSource() {
@@ -90,31 +88,35 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Данный бин нужен для создания фабрики EntityManagerFactory
+     * Данный метод нужен для настройки Hibernate
      * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством
-     * объявленного в поле Environment) указанного в папке ресурсов в аннотации @PropertySource
-     * <p>
-     * IntelliJ IDEA сказала что два варианта при @Autoware в UserDAOEntityManagerImpl !!!!!
-     *
-     * @see web.dao.UserDAOEntityManagerImpl#UserDAOEntityManagerImpl
+     * объявленного в поле Environment) указанного в папке ресурсов с внедрением через конструктор
+     * c аннотацией @Autowired
      */
-    @Bean
-    public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManager =
-                new LocalContainerEntityManagerFactoryBean();
-        // Тут ниже явно указал на использование Hibernate
-        entityManager.setDataSource(getDataSource());
-        entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManager.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
-        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
+    private Properties getHibernateProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
         properties.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
 
-        entityManager.setJpaProperties(properties);
+        return properties;
+    }
+
+    /**
+     * Данный бин нужен для создания фабрики EntityManagerFactory
+     * Данные настроек беруться из внешнего файла "db.properties" (через доступ к нему посредством
+     * объявленного в поле Environment) указанного в папке ресурсов с внедрением через конструктор
+     * c аннотацией @Autowired
+     */
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean entityManager =
+                new LocalContainerEntityManagerFactoryBean();
+        entityManager.setDataSource(getDataSource());
+        entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManager.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
+        entityManager.setJpaProperties(getHibernateProperties());
 
         return entityManager;
     }
@@ -123,26 +125,12 @@ public class WebConfig implements WebMvcConfigurer {
      * Данный бин нужен для создания TransactionManager под требования аннотации @EnableTransactionManagement
      */
     @Bean
-    public JpaTransactionManager getTransactionManager() {
+    public JpaTransactionManager getHibernateTransactionManagerFromEntityManagerFactory() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(getEntityManagerFactory().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         transactionManager.setDataSource(getDataSource());
 
         return transactionManager;
-    }
-
-    /**
-     * Данный бин нужен для создания EntityManager из фабрики EntityManagerFactory
-     * Используется в UserDAOEntityManagerImpl
-     * <p>
-     * IntelliJ IDEA сказала что два варианта при @Autoware в UserDAOEntityManagerImpl !!!!!
-     *
-     * @see web.dao.UserDAOEntityManagerImpl#UserDAOEntityManagerImpl
-     */
-    @Bean
-    public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory) {
-
-        return entityManagerFactory.createEntityManager();
     }
 
 }
